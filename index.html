@@ -5,35 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>QuickZ | Education Platform</title>
     
-    <link rel="manifest" href="public/manifest.json">
+    <!-- PWA ম্যানিফেস্ট ও আইকন (রিলেটিভ পাথ) -->
+    <link rel="manifest" href="./public/manifest.json">
     <meta name="theme-color" content="#4f46e5">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="QuickZ">
-    <link rel="apple-touch-icon" href="public/icons/icon-192.png">
-    <link rel="icon" type="image/png" href="public/icons/icon-192.png">
-
-    <!-- Tailwind -->
+    <link rel="apple-touch-icon" href="./public/icons/icon-192.png">
+    <link rel="icon" type="image/png" href="./public/icons/icon-192.png">
+    
+    <!-- Tailwind CSS (ডেভেলপমেন্ট - প্রোডাকশনে বিল্ড করে নেবেন) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: {} } }
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: {} }
+        }
     </script>
-
+    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    
     <!-- SolaimanLipi Font -->
     <link rel="stylesheet" href="https://fonts.maateen.me/solaiman-lipi/font.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://fonts.maateen.me/solaiman-lipi/font.css"></noscript>
-
-    <!-- Outfit Font -->
+    
+    <!-- Outfit Font (ইংরেজির জন্য) -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&display=swap" rel="stylesheet">
-
+    
     <!-- SweetAlert2 & Moment.js -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-
-    <!-- MathJax -->
+    
+    <!-- MathJax কনফিগারেশন -->
     <script>
         window.MathJax = {
             tex: {
@@ -46,14 +51,26 @@
             options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
         };
     </script>
-
-    <!-- Shared Styles -->
-    <link rel="stylesheet" href="src/shared/styles/base.css">
-    <link rel="stylesheet" href="src/shared/styles/teacher.css">
-    <link rel="stylesheet" href="src/shared/styles/student.css">
+    
+    <!-- কাস্টম স্টাইল (রিলেটিভ পাথ) -->
+    <link rel="stylesheet" href="./src/shared/styles/base.css">
+    <link rel="stylesheet" href="./src/shared/styles/teacher.css">
+    <link rel="stylesheet" href="./src/shared/styles/student.css">
 </head>
 <body class="text-slate-800 bg-slate-50">
-    <!-- All UI is rendered by bootstrap.js -->
-    <script type="module" src="src/bootstrap.js"></script>
+
+    <!-- সার্ভিস ওয়ার্কার রেজিস্ট্রেশন -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./public/sw.js')
+                    .then(function(reg) { console.log('✅ SW registered'); })
+                    .catch(function(err) { console.log('⚠️ SW failed:', err); });
+            });
+        }
+    </script>
+
+    <!-- অ্যাপ বুটস্ট্র্যাপ (মডিউল) -->
+    <script type="module" src="./src/bootstrap.js"></script>
 </body>
 </html>
