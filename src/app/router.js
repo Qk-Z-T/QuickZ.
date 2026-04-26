@@ -1,5 +1,5 @@
 // src/app/router.js
-// ইউনিফাইড রাউটার — স্টুডেন্ট ও টিচার উভয়ের জন্য
+// ইউনিফাইড রাউটার — role ভিত্তিক মডিউল মাউন্ট
 
 import { getState, setState, subscribe } from '../core/state/store.js';
 import { EventBus } from '../core/state/event-bus.js';
@@ -9,44 +9,27 @@ import { escapeHtml } from '../core/utils/sanitize.js';
 let currentRole = null;
 let currentPage = null;
 
-/**
- * রাউটার ইনিশিয়ালাইজ
- */
 function initRouter() {
-    // রোল চেঞ্জ শুনুন
     subscribe('role', (role) => {
         currentRole = role;
-        if (role) {
-            showAppShell();
-            navigateToDefault();
+        if (role === 'student') {
+            mountStudentApp();
+        } else if (role === 'teacher') {
+            mountTeacherApp();
         } else {
             showAuthScreen();
         }
     });
 
-    // পেজ চেঞ্জ হ্যান্ডলার (ইভেন্ট-বাস থেকে)
     EventBus.on('page:change', (page) => {
         if (page) loadPage(page);
     });
 
-    // ব্রাউজার ব্যাক/ফরওয়ার্ড হ্যান্ডেল
     window.addEventListener('popstate', (event) => {
         if (event.state?.page) {
-            loadPage(event.state.page);
+            navigateTo(event.state.page, false);
         }
     });
-}
-
-/**
- * অ্যাপ শেল দেখান (রোল অনুযায়ী কন্টেইনার সেট)
- */
-function showAppShell() {
-    // অথ স্ক্রিন হাইড
-    document.getElementById('auth-screen')?.classList.add('hidden');
-    // স্প্ল্যাশ হাইড
-    document.getElementById('splash-screen')?.classList.add('hidden');
-    // অ্যাপ কন্টেইনার দেখান
-    document.getElementById('app-container')?.classList.remove('hidden');
 }
 
 function showAuthScreen() {
@@ -54,22 +37,20 @@ function showAuthScreen() {
     document.getElementById('app-container')?.classList.add('hidden');
 }
 
-function navigateToDefault() {
-    const role = getState('role');
-    let page;
-    if (role === 'student') {
-        page = getState('profileCompleted') ? 'dashboard' : 'profile';
-    } else if (role === 'teacher') {
-        page = 'home';
-    }
-    navigateTo(page, true);
+function mountStudentApp() {
+    document.getElementById('auth-screen')?.classList.add('hidden');
+    document.getElementById('app-container')?.classList.remove('hidden');
+    import('../features/student/index.js').then(m => m.StudentModule.mount());
+    navigateTo('dashboard');
 }
 
-/**
- * পেজ নেভিগেট
- * @param {string} page
- * @param {boolean} [addToHistory=true]
- */
+function mountTeacherApp() {
+    document.getElementById('auth-screen')?.classList.add('hidden');
+    document.getElementById('app-container')?.classList.remove('hidden');
+    import('../features/teacher/index.js').then(m => m.TeacherModule.mount());
+    navigateTo('home');
+}
+
 function navigateTo(page, addToHistory = true) {
     const role = getState('role');
     const validPages = role === 'student' ? STUDENT_ROUTES.map(r => r.path) : TEACHER_ROUTES.map(r => r.path);
@@ -84,21 +65,14 @@ function navigateTo(page, addToHistory = true) {
     loadPage(page);
 }
 
-/**
- * পেজ লোড করা (ইভেন্ট এমিট করা, UI রেন্ডারিং ফিচার মডিউল করবে)
- */
 function loadPage(page) {
     EventBus.emit('page:loading', page);
-    // এখানে ডায়নামিক ইমপোর্ট করব, কিন্তু এখন placeholder:
-    // ফিচার মডিউল রেজিস্টার করলে তারা page:loading শুনবে
-    // আমরা এখন একটি সিম্পল innerHTML দিয়ে সূচনা করি
     const container = document.getElementById('app-container');
     if (container) {
         container.innerHTML = `<div class="p-6 text-center"><div class="loader mx-auto"></div><p>Loading ${escapeHtml(page)}...</p></div>`;
     }
 }
 
-// রাউট এক্সপোজ
 export const Router = {
     init: initRouter,
     navigateTo,
