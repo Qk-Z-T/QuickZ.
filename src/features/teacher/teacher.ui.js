@@ -1,5 +1,5 @@
 // src/features/teacher/teacher.ui.js
-// টিচার UI রেন্ডারিং — groups পেজ সহ
+// টিচার UI রেন্ডারিং — notices সহ
 
 import { escapeHtml } from '../../core/utils/sanitize.js';
 import { loadMathJax } from '../../core/utils/math-helper.js';
@@ -51,6 +51,9 @@ function loadPage(page) {
             break;
         case 'groups':
             import('./views/groups.view.js').then(m => m.renderGroups(contentEl));
+            break;
+        case 'notices':
+            import('./views/notices.view.js').then(m => m.renderNotices(contentEl));
             break;
         default:
             contentEl.innerHTML = `<div class="p-6 text-center">Unknown page: ${escapeHtml(page)}</div>`;
