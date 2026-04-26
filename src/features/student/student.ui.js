@@ -5,6 +5,14 @@ import { escapeHtml } from '../../core/utils/sanitize.js';
 import { loadMathJax } from '../../core/utils/math-helper.js';
 import { getState } from '../../core/state/store.js';
 import { renderStudentHeader } from './components/header.js';
+import { renderDashboard } from './views/dashboard.view.js';
+import { renderCourses } from './views/courses.view.js';
+import { renderRank } from './views/rank.view.js';
+import { renderResults } from './views/results.view.js';
+import { renderAnalysis } from './views/analysis.view.js';
+import { renderNotices } from './views/notices.view.js';
+import { renderManagement } from './views/management.view.js';
+import { renderProfile } from './views/profile.view.js';
 
 let shellRendered = false;
 
@@ -18,9 +26,14 @@ function renderShell() {
     const headerHTML = renderStudentHeader();
     appContainer.innerHTML = `
         ${headerHTML}
-        <main id="student-page-content" class="md:ml-[250px] md:pt-[60px] min-h-screen"></main>
-        <button id="review-panel-btn" class="hidden fixed bottom-5 right-5 ...">...</button>
-        <div id="review-panel" class="hidden fixed bottom-20 right-5 ...">...</div>
+        <main id="student-page-content" class="md:ml-[250px] md:pt-[60px] min-h-screen relative w-full md:w-[calc(100%-250px)]"></main>
+        <button id="review-panel-btn" class="review-panel-btn hidden">
+            <i class="fas fa-list-ol"></i>
+        </button>
+        <div id="review-panel" class="review-panel">
+            <div class="review-panel-title">প্রশ্নসমূহ</div>
+            <div id="question-numbers" class="question-numbers"></div>
+        </div>
     `;
     shellRendered = true;
     // MathJax সেটআপ (প্রয়োজনমতো)
@@ -43,11 +56,10 @@ function loadPage(page) {
     const contentEl = document.getElementById('student-page-content');
     if (!contentEl) return;
 
-    // গুরুত্বপূর্ণ: XSS প্রতিরোধে escapeHtml ব্যবহার করা হয়েছে
+    // XSS প্রতিরোধে escapeHtml ব্যবহার করা হয়েছে
     contentEl.innerHTML = `<div class="p-6 text-center"><div class="loader mx-auto"></div><p>Loading ${escapeHtml(page)}...</p></div>`;
 
-    // ফিচার-নির্দিষ্ট রেন্ডারিং ডায়নামিক ইমপোর্ট দিয়ে করা হবে
-    // আপাতত আমরা স্টাব রেখেছি — পরবর্তী ধাপে প্রতিটি পেজের আলাদা ফাইল আসবে
+    // ফিচার-নির্দিষ্ট রেন্ডারিং
     switch (page) {
         case 'dashboard':
             renderDashboard(contentEl);
@@ -76,42 +88,6 @@ function loadPage(page) {
         default:
             contentEl.innerHTML = `<div class="p-6 text-center">Unknown page: ${escapeHtml(page)}</div>`;
     }
-}
-
-// প্লেসহোল্ডার রেন্ডার ফাংশন (পরের ধাপে বিস্তারিত হবে)
-function renderDashboard(container) {
-    container.innerHTML = `<div class="p-5 max-w-lg mx-auto">
-        <h2 class="text-2xl font-bold mb-4">Dashboard</h2>
-        <p>Loading dashboard data...</p>
-    </div>`;
-}
-
-function renderCourses(container) {
-    container.innerHTML = `<div class="p-5"><h2 class="text-2xl font-bold mb-4">Courses</h2><p>Loading courses...</p></div>`;
-}
-
-function renderRank(container) {
-    container.innerHTML = `<div class="p-5"><h2 class="text-2xl font-bold mb-4">Rankings</h2><p>Loading rankings...</p></div>`;
-}
-
-function renderResults(container) {
-    container.innerHTML = `<div class="p-5"><h2 class="text-2xl font-bold mb-4">Results</h2><p>Loading results...</p></div>`;
-}
-
-function renderAnalysis(container) {
-    container.innerHTML = `<div class="p-5"><h2 class="text-2xl font-bold mb-4">Analysis</h2><p>Loading analysis...</p></div>`;
-}
-
-function renderNotices(container) {
-    container.innerHTML = `<div class="p-5"><h2 class="text-2xl font-bold mb-4">Notices</h2><p>Loading notices...</p></div>`;
-}
-
-function renderManagement(container) {
-    container.innerHTML = `<div class="p-5"><h2 class="text-2xl font-bold mb-4">Management</h2><p>Loading management...</p></div>`;
-}
-
-function renderProfile(container) {
-    container.innerHTML = `<div class="p-5"><h2 class="text-2xl font-bold mb-4">Profile</h2><p>Loading profile...</p></div>`;
 }
 
 export const StudentUI = {
