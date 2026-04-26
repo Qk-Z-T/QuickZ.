@@ -1,5 +1,5 @@
 // src/core/constants/routes.js
-// রাউট ডেফিনিশন (groups সহ)
+// রাউট ডেফিনিশন (notices যোগ)
 
 export const STUDENT_ROUTES = [
     { path: 'dashboard', label: 'হোম' },
@@ -19,4 +19,5 @@ export const TEACHER_ROUTES = [
     { path: 'folders', label: 'লাইব্রেরি' },
     { path: 'management', label: 'ম্যানেজমেন্ট' },
     { path: 'groups', label: 'কোর্স ব্যবস্থাপনা' },
+    { path: 'notices', label: 'নোটিশ ও পোল' },
 ];
