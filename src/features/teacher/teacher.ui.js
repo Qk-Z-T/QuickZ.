@@ -1,5 +1,5 @@
 // src/features/teacher/teacher.ui.js
-// টিচার UI রেন্ডারিং — পেজ ও কম্পোনেন্ট
+// টিচার UI রেন্ডারিং — groups পেজ সহ
 
 import { escapeHtml } from '../../core/utils/sanitize.js';
 import { loadMathJax } from '../../core/utils/math-helper.js';
@@ -8,9 +8,6 @@ import { renderTeacherHeader } from './components/header.js';
 
 let shellRendered = false;
 
-/**
- * অ্যাপ শেল রেন্ডার (হেডার + মেইন কন্টেইনার)
- */
 function renderShell() {
     const appContainer = document.getElementById('app-container');
     if (!appContainer) return;
@@ -24,18 +21,12 @@ function renderShell() {
     loadMathJax();
 }
 
-/**
- * শেল টিয়ারডাউন
- */
 function teardownShell() {
     const appContainer = document.getElementById('app-container');
     if (appContainer) appContainer.innerHTML = '';
     shellRendered = false;
 }
 
-/**
- * নির্দিষ্ট পেজ লোড
- */
 function loadPage(page) {
     const contentEl = document.getElementById('teacher-page-content');
     if (!contentEl) return;
@@ -57,6 +48,9 @@ function loadPage(page) {
             break;
         case 'management':
             import('./views/management.view.js').then(m => m.renderManagement(contentEl));
+            break;
+        case 'groups':
+            import('./views/groups.view.js').then(m => m.renderGroups(contentEl));
             break;
         default:
             contentEl.innerHTML = `<div class="p-6 text-center">Unknown page: ${escapeHtml(page)}</div>`;
